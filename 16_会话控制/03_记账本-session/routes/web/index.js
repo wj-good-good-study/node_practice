@@ -1,0 +1,45 @@
+var express = require('express');
+const moment = require('moment')
+const AccountModel = require('../../models/AccountModles')
+const checkLoginMiddleware = require('../../middlewares/checkLoginMiddleware')
+var router = express.Router();
+
+router.get('/',(req,res)=>{
+  res.redirect('/account')
+})
+
+router.get('/account', checkLoginMiddleware, (req, res) => {
+
+  AccountModel.find().sort({ time: -1 }).then(data => {
+    res.render('list', { accounts: data, moment });
+  }).catch(err => {
+    res.status(500).send('获取数据失败：' + err)
+  })
+});
+
+router.get('/account/create', checkLoginMiddleware, (req, res) => {
+  res.render('create');
+});
+
+router.post('/account', checkLoginMiddleware, (req, res) => {
+  // 插入数据库
+  AccountModel.create({
+    ...req.body,
+    time: moment(req.body.time).toDate()
+  }).then(data =>
+    res.render('success', { msg: '添加成功', url: '/account' })
+  ).catch(err =>
+    res.status(500).send('插入失败：' + err)
+  );
+});
+
+router.get('/account/:id', checkLoginMiddleware, (req, res) => {
+  const id = req.params.id;
+  AccountModel.deleteOne({ _id: id }).then(data => {
+    res.render('success', { msg: '删除成功', url: '/account' })
+  }).catch(err => {
+    res.status(500).send('删除数据失败：' + err)
+  });
+
+});
+module.exports = router;

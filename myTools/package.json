@@ -1,0 +1,8 @@
+{
+    "name": "wj-first-tools",
+    "version": "1.0.0",
+    "description": "第一个上传的包，提供了格式化时间，HTMLEscape等功能",
+    "main": "index.js",
+    "license": "ISC",
+    "keywords": ["wj"]
+}
